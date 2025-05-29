@@ -5,21 +5,25 @@ import os
 import sys
 
 def dump(database_name='database.db', output_file=''):
-    # main.py의 위치를 기준으로 경로 설정
+    """
+    Print or save all contents of a SQLite database.
+
+    Parameters:
+        database_name (str): Name of the SQLite database file.
+        output_file (str): If given, write output to file. If empty, print to console.
+    """
+    
     main_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    db_path = os.path.join(os.path.dirname(__file__), database_name)
+    db_path = database_name if os.path.isabs(database_name) else os.path.join(main_dir, database_name)
 
     if not os.path.exists(db_path):
         print(f"[ERROR] Database not found at: {db_path}")
         return
 
-    # SQLite 연결
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-
     output_lines = []
 
-    # 모든 테이블 조회
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
 
@@ -33,12 +37,11 @@ def dump(database_name='database.db', output_file=''):
         rows = cursor.fetchall()
         for row in rows:
             output_lines.append(" | ".join(str(cell) for cell in row))
-        output_lines.append("")  # 빈 줄로 테이블 구분
+        output_lines.append("")
 
     conn.close()
 
     if output_file:
-        # 상대 경로 처리
         output_path = output_file if os.path.isabs(output_file) else os.path.join(main_dir, output_file)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, 'w', encoding='utf-8') as f:
