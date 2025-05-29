@@ -9,8 +9,9 @@
 
 # construct/main.py
 
-from constructor import add
+from constructor import addinvoice, dbutil
 
 if __name__ == "__main__":
     # 우체국택배 송장번호 예시 사용
-    add.add_invoice('po', '6896700517650', 1)
+    addinvoice.add_invoice('cj', '520315867871', 1)
+    dbutil.dump('raw.db')
