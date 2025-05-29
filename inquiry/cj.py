@@ -20,11 +20,7 @@ def cj_inquiry(invoice: str) -> str:
         res.raise_for_status()
         data = res.json()
     except Exception:
-        return json.dumps({
-            "success": False,
-            "finish": False,
-            "table": []
-        }, ensure_ascii=False)
+        return {"success": False, "finish": False, "table": []}
 
     table = []
     finish = False
@@ -39,22 +35,11 @@ def cj_inquiry(invoice: str) -> str:
             try:
                 dt_str = f"{date_str} {time_str}"
                 timestamp = int(datetime.strptime(dt_str, "%Y-%m-%d %H:%M:%S").timestamp())
-            except:
-                continue
+            except: continue
 
-            table.append({
-                "location": location,
-                "status": status,
-                "timestamp": timestamp
-            })
-
+            table.append({"location": location, "status": status, "timestamp": timestamp})
             if "배송완료" in status:
                 finish = True
-
-        return json.dumps({
-            "success": True,
-            "finish": finish,
-            "table": table
-        }, ensure_ascii=False)
-    
-    return json.dumps({ "success": False, "finish": False, "table": [] }, ensure_ascii=False)
+        return {"success": True, "finish": finish, "table": table}
+    else: 
+        return { "success": False, "finish": False, "table": [] }
