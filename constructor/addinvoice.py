@@ -47,7 +47,6 @@ def add_one_invoice(company: str, invoice: str, cur=None):
     except Exception as e:
         print(f"[ERROR] Inquiry failed for {company}:{invoice} - {e}")
         return {'success': False, 'finish': False}
-    print(result)
     if not (result.get("success") and result.get("finish")):
         return {'success': result.get("success", False), 'finish': result.get("finish", False)}
     table = result.get("table", [])
