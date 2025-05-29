@@ -34,7 +34,7 @@ def add_invoice(company: str, invoice: str, window_size: int = 1):
     conn.commit()
     conn.close()
 
-def __add_one_invoice(company: str, invoice: str, cur):
+def __add_one_invoice(company: str, invoice: str, cur=None):
     if company not in INQUIRY_FUNCTIONS:
         print(f"[ERROR] Unknown company: {company}"); return
     inquiry_func = INQUIRY_FUNCTIONS[company]
@@ -63,8 +63,21 @@ def __add_one_invoice(company: str, invoice: str, cur):
 
         updates.append((location_identifier, str(delta)))
 
-    _update_database(updates, cur)
-
+    # Update Database
+    if cur is None:
+        conn = sqlite3.connect(DB_PATH)
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS raw (
+                location_identifier TEXT PRIMARY KEY,
+                timedeltas TEXT
+            )
+        ''')
+        _update_database(updates, cur)
+        conn.commit()
+        conn.close()
+    else:
+        _update_database(updates, cur)
 
 def _parse_timestamp(ts):
     try: 
