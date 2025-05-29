@@ -1,6 +1,6 @@
-# @/constructor/__init__.py
+# @/database/__init__.py
 
-from .addinvoice import add_invoice
+from .add import add_invoice
 from .dbutil import dump
 from .construct import construct
 
