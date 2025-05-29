@@ -1,5 +1,6 @@
+# @/inquiry/cj.py
+
 import requests
-import json
 from datetime import datetime
 
 def cj_inquiry(invoice: str) -> str:
