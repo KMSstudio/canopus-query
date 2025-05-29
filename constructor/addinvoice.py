@@ -16,10 +16,10 @@ INQUIRY_FUNCTIONS = {
 }
 
 def add_invoice(company: str, invoice: str, window_size: int = 1):
+    results = []
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    # Create table `raw` if not exists
     cur.execute('''
         CREATE TABLE IF NOT EXISTS raw (
             location_identifier TEXT PRIMARY KEY,
@@ -29,26 +29,33 @@ def add_invoice(company: str, invoice: str, window_size: int = 1):
 
     center = int(invoice)
     for offset in range(-(window_size // 2), (window_size + 1) // 2):
-        add_one_invoice(company, str(center + offset), cur)
+        result = add_one_invoice(company, str(center + offset), cur)
+        results.append(result)
 
     conn.commit()
     conn.close()
+    return results
 
 def add_one_invoice(company: str, invoice: str, cur=None):
     if company not in INQUIRY_FUNCTIONS:
-        print(f"[ERROR] Unknown company: {company}"); return
+        print(f"[ERROR] Unknown company: {company}")
+        return {'success': False, 'finish': False}
     inquiry_func = INQUIRY_FUNCTIONS[company]
 
+    # get result
     try: result = inquiry_func(invoice)
-    except Exception as e: print(f"[ERROR] Inquiry failed for {company}:{invoice} - {e}"); return
-    
-    if not (result.get("success") and result.get("finish")): return
+    except Exception as e:
+        print(f"[ERROR] Inquiry failed for {company}:{invoice} - {e}")
+        return {'success': False, 'finish': False}
+    print(result)
+    if not (result.get("success") and result.get("finish")):
+        return {'success': result.get("success", False), 'finish': result.get("finish", False)}
     table = result.get("table", [])
     if len(table) < 2: return
-    
     finish_at = _parse_timestamp(table[-1]["timestamp"])
     if finish_at is None: return
 
+    # parse result
     updates = []
     for row in table[:-1]:
         timestamp = _parse_timestamp(row["timestamp"])
@@ -78,6 +85,8 @@ def add_one_invoice(company: str, invoice: str, cur=None):
         conn.close()
     else:
         _update_database(updates, cur)
+
+    return {'success': True, 'finish': True}
 
 def _parse_timestamp(ts):
     try: 
