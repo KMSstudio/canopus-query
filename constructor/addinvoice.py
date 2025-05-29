@@ -6,16 +6,24 @@ from datetime import datetime
 import inquiry
 import time
 
-# 데이터베이스 파일 경로
 DB_PATH = os.path.join(os.path.dirname(__file__), 'database.db')
-
-# 배송사별 조회 함수 매핑
 INQUIRY_FUNCTIONS = {
     'cj': inquiry.cj_inquiry,
     'po': inquiry.po_inquiry,
 }
 
 def add_invoice(company: str, invoice: str, window_size: int = 1):
+    """
+    指定された送り状番号を中心に、window_sizeの範囲で複数の配送データを処理し、SQLiteデータベースに追加します。
+
+    パラメータ:
+        company (str): 配送会社のコード（例: 'cj', 'po'）
+        invoice (str): 送り状番号（数値文字列）
+        window_size (int): 処理する範囲（デフォルトは1）
+
+    戻り値:
+        list[dict]: 各送り状の処理結果（success, finishを含む辞書）
+    """
     results = []
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -88,6 +96,15 @@ def add_one_invoice(company: str, invoice: str, cur=None):
     return {'success': True, 'finish': True}
 
 def _parse_timestamp(ts):
+    """
+    タイムスタンプの形式に応じて、datetimeオブジェクトに変換します。
+
+    パラメータ:
+        ts (Union[str, int]): 日時を表す文字列またはUNIXタイムスタンプ（秒）
+
+    戻り値:
+        datetime or None: 変換に成功した場合はdatetime、失敗した場合はNone
+    """
     try: 
         if isinstance(ts, int): return datetime.fromtimestamp(ts)
         return datetime.strptime(ts, "%Y-%m-%d %H:%M:%S")
@@ -95,6 +112,13 @@ def _parse_timestamp(ts):
         return None
 
 def _update_database(pairs, cur):
+    """
+    location_identifierごとに、timedeltaの値をデータベースに保存または更新します。
+
+    パラメータ:
+        pairs (list[tuple[str, str]]): 位置識別子と対応するtimedeltaのペアのリスト
+        cur (sqlite3.Cursor): アクティブなカーソルオブジェクト
+    """
     for loc_id, delta in pairs:
         cur.execute('SELECT timedeltas FROM raw WHERE location_identifier = ?', (loc_id,))
         row = cur.fetchone()
