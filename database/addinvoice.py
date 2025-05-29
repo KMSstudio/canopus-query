@@ -37,7 +37,7 @@ def add_invoice(company: str, invoice: str, window_size: int = 1):
 
     center = int(invoice)
     for offset in range(-(window_size // 2), (window_size + 1) // 2):
-        result = add_one_invoice(company, str(center + offset), cur)
+        result = add_one_invoice(company, str(center + offset*20), cur)
         results.append(result)
 
     conn.commit()
