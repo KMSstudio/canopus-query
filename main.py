@@ -9,7 +9,7 @@
 
 # construct/main.py
 
-from constructor import addinvoice, dbutil
+from database import addinvoice, dbutil
 
 if __name__ == "__main__":
     # 우체국택배 송장번호 예시 사용
