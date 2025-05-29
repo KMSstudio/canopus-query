@@ -1,4 +1,4 @@
 
-database 에서 raw 테이블 값 보고 hist 데이터 medi 데이터 뽑아내기
+controller? 암튼 어떤 곳에다가 유효한 운송장 보여주면 그거 저장하고, 한 방에 push 하기
 예측 기능
 웹 기능 **
