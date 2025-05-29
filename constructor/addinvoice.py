@@ -29,12 +29,12 @@ def add_invoice(company: str, invoice: str, window_size: int = 1):
 
     center = int(invoice)
     for offset in range(-(window_size // 2), (window_size + 1) // 2):
-        __add_one_invoice(company, str(center + offset), cur)
+        add_one_invoice(company, str(center + offset), cur)
 
     conn.commit()
     conn.close()
 
-def __add_one_invoice(company: str, invoice: str, cur=None):
+def add_one_invoice(company: str, invoice: str, cur=None):
     if company not in INQUIRY_FUNCTIONS:
         print(f"[ERROR] Unknown company: {company}"); return
     inquiry_func = INQUIRY_FUNCTIONS[company]
