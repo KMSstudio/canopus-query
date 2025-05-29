@@ -13,8 +13,8 @@ def dump(database_name='database.db', output_file=''):
         output_file (str): If given, write output to file. If empty, print to console.
     """
     
-    main_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    db_path = database_name if os.path.isabs(database_name) else os.path.join(main_dir, database_name)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = database_name if os.path.isabs(database_name) else os.path.join(base_dir, database_name)
 
     if not os.path.exists(db_path):
         print(f"[ERROR] Database not found at: {db_path}")

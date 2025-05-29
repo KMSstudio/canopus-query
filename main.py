@@ -13,5 +13,5 @@ from constructor import addinvoice, dbutil
 
 if __name__ == "__main__":
     # 우체국택배 송장번호 예시 사용
-    addinvoice.add_invoice('po', '6896700517650', 10)
+    # addinvoice.add_invoice('po', '6896700517650', 10)
     dbutil.dump('database.db')
