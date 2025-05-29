@@ -13,6 +13,7 @@ def po_inquiry(invoice: str):
     rows = soup.select('table.table_col > tbody > tr')
 
     table = []
+    remove_keywords = ["TEL", "("]
     for row in rows:
         cols = [td.get_text(strip=True) for td in row.select('td')]
         if len(cols) >= 4:
@@ -22,8 +23,12 @@ def po_inquiry(invoice: str):
             except ValueError:
                 continue
 
+            location_raw = cols[2]
+            cut = [location_raw.find(k) for k in remove_keywords if k in location_raw]
+            location = location_raw[:min(cut)].strip() if cut else location_raw.strip()
+
             table.append({
-                "location": cols[2],
+                "location": location,
                 "status": re.sub(r'\s*\(.*?\)', '', cols[3]),
                 "timestamp": timestamp
             })

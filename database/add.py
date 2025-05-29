@@ -1,10 +1,9 @@
-# @/constructor/add.py
+# @/database/add.py
 
 import os
 import sqlite3
 from datetime import datetime
 import inquiry
-import time
 
 DB_PATH = os.path.join(os.path.dirname(__file__), 'database.db')
 INQUIRY_FUNCTIONS = {

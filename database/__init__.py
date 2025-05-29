@@ -2,5 +2,6 @@
 
 from .addinvoice import add_invoice
 from .dbutil import dump
+from .construct import construct
 
-__all__ = ['add_invoice', 'dump']
+__all__ = ['add_invoice', 'dump', 'construct']
